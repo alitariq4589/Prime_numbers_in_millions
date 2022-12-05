@@ -1,0 +1,45 @@
+// --------------------------------- Test on RISC-V GCC -------------------------------------
+node ("x86_runner2"){
+    stage ('Cleanup'){
+        cleanWs()
+    }
+    stage('60s Sleep'){
+        sleep(time:60, unit:'SECONDS')
+    }
+    stage ('Checkout SCM'){
+        checkout scm
+    }
+    stage ('Compile QEMU Usermode'){
+        sh'''
+            riscv64-unknown-linux-gnu-gcc prime_numbers.c -O3 -o prime_numbers
+        '''
+    }
+    stage ('Run QEMU Usermode'){
+        sh'''
+            qemu-riscv64 -L $RISCV_SYSROOT ./prime_numbers
+        '''
+
+    }
+}
+// --------------------------------- Test on RISC-V Linux -------------------------------------
+node ("riscv64_runner1"){
+    stage ('Cleanup'){
+        cleanWs()
+    }
+    stage('60s Sleep'){
+        sleep(time:60, unit:'SECONDS')
+    }
+    stage ('Checkout SCM'){
+        checkout scm
+    }
+    stage ('Compile QEMU Linux'){
+        sh'''
+            gcc prime_numbers.c -O3 -o prime_numbers
+        '''
+    }
+    stage ('Run QEMU Linux'){
+        sh'''
+            ./prime_numbers
+        '''
+    }
+}
