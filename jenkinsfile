@@ -43,3 +43,25 @@ node ("riscv64_runner1"){
         '''
     }
 }
+// --------------------------------- Test on Hifive Unleashed -------------------------------------
+node ("hifive_unleashed"){
+    stage ('Cleanup'){
+        cleanWs()
+    }
+    stage('60s Sleep'){
+        sleep(time:60, unit:'SECONDS')
+    }
+    stage ('Checkout SCM'){
+        checkout scm
+    }
+    stage ('Compile Hifive Unleashed'){
+        sh'''
+            gcc prime_numbers.c -O3 -o prime_numbers
+        '''
+    }
+    stage ('Run QEMU Hifive Unleashed'){
+        sh'''
+            ./prime_numbers
+        '''
+    }
+}
